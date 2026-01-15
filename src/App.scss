@@ -1,2 +1,18 @@
-@use "./styles/mixins";
-@use "./styles/variables";
+@import './styles/variables';
+@import './styles/mixins';
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+  
+  @media (max-width: 980px) {
+    flex-direction: column;
+  }
+}

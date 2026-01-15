@@ -1,0 +1,30 @@
+$color-accent: orange;
+$color-primary: #262626;
+$color-secondary: #F2F2F2;
+
+:root {
+  --bg-primary: #{$color-secondary};
+  --bg-secondary: #ffffff;
+  --text-primary: #{$color-primary};
+  --text-secondary: #{lighten($color-primary, 20%)};
+  --border-color: #{darken($color-secondary, 10%)};
+  --accent-color: #{$color-accent};
+  --sidebar-width: 400px;
+  --card-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --input-bg: #ffffff;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #121212;
+  --bg-secondary: #{$color-primary};
+  --text-primary: #{$color-secondary};
+  --text-secondary: #{darken($color-secondary, 20%)};
+  --border-color: #333333;
+  --accent-color: #{$color-accent};
+  --card-bg: #1e1e1e;
+  --glass-bg: rgba(0, 0, 0, 0.6);
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --input-bg: #2a2a2a;
+}

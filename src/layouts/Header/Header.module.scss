@@ -1,2 +1,81 @@
-@use "../../styles/_variables.scss";
-@use "../../styles/_mixins.scss";
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.header {
+  height: 60px;
+  @include glass;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logoBox {
+  background: var(--accent-color);
+  color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 12px;
+  @include flex-center;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+}
+
+.infoBtn {
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  @include flex-center;
+  @include transition;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-primary);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+  }
+}
+
+.themeToggle {
+  padding: 0.6rem;
+  border-radius: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  @include flex-center;
+  @include transition;
+
+  svg {
+    stroke: currentColor;
+  }
+
+  &:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: rotate(15deg);
+  }
+}

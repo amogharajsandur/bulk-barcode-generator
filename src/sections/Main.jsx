@@ -1,10 +1,24 @@
 import { useRef, useState, useEffect } from 'react';
 import JsBarcode from 'jsbarcode';
-import { Layers, Plus, ChevronDown, Download } from 'lucide-react';
+import { Layers, Plus, ChevronDown, Download, Clipboard, Check } from 'lucide-react';
 import styles from './Main.module.scss';
 
-const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportFormat }) => {
+const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportFormat, barColor, bgColor }) => {
   const canvasRef = useRef(null);
+
+  const copyToClipboard = async () => {
+    if (!canvasRef.current) return;
+    try {
+      const blob = await new Promise(resolve => canvasRef.current.toBlob(resolve, 'image/png'));
+      const item = new ClipboardItem({ 'image/png': blob });
+      await navigator.clipboard.write([item]);
+      alert(`Barcode "${value}" copied to clipboard!`);
+    } catch (err) {
+      console.error("Clipboard Error:", err);
+      // Fallback for browsers that don't support ClipboardItem image writing fully
+      alert("Failed to copy image. Your browser may not support this feature.");
+    }
+  };
 
   const downloadSingle = () => {
     if (!canvasRef.current) return;
@@ -12,7 +26,7 @@ const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportF
     const dataUrl = canvasRef.current.toDataURL(`image/${format}`);
     const link = document.createElement('a');
     link.href = dataUrl;
-    link.download = `barcode-${value}.${exportFormat}`;
+    link.download = `${value}.${exportFormat}`;
     link.click();
   };
 
@@ -26,30 +40,35 @@ const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportF
           displayValue: true,
           fontSize: 14,
           font: "monospace",
-          background: "transparent",
-          lineColor: theme === 'dark' ? '#F2F2F2' : '#262626',
+          background: bgColor,
+          lineColor: barColor,
           textPosition: textPosition
         });
-      } catch (e) {
-        console.error("Barcode Render Error:", e);
+      } catch (err) {
+        console.error("JsBarcode Error:", err);
       }
     }
-  }, [value, height, width, textPosition, theme]);
+  }, [value, height, width, textPosition, theme, barColor, bgColor]);
 
   return (
     <div className={styles.barcodeCard}>
       <div className={styles.lineTag}>
         LINE {index + 1}
       </div>
-      <button className={styles.downloadBtn} onClick={downloadSingle} title="Download this barcode">
-        <Download size={14} />
-      </button>
+      <div className={styles.cardActions}>
+        <button className={styles.actionBtn} onClick={copyToClipboard} title="Copy image to clipboard">
+          <Clipboard size={14} />
+        </button>
+        <button className={styles.actionBtn} onClick={downloadSingle} title="Download this barcode">
+          <Download size={14} />
+        </button>
+      </div>
       <canvas ref={canvasRef}></canvas>
     </div>
   );
 };
 
-export default function Main({ numbers, height, width, textPosition, theme, exportFormat }) {
+export default function Main({ numbers, height, width, textPosition, theme, exportFormat, barColor, bgColor }) {
   const [visibleCount, setVisibleCount] = useState(30);
 
   const loadMore = () => {
@@ -97,6 +116,8 @@ export default function Main({ numbers, height, width, textPosition, theme, expo
                 index={idx} 
                 theme={theme} 
                 exportFormat={exportFormat}
+                barColor={barColor}
+                bgColor={bgColor}
               />
             ))}
           </>

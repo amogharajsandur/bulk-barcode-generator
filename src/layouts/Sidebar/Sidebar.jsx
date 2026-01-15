@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import JsBarcode from 'jsbarcode';
 import styles from './Sidebar.module.scss';
 
-const SamplePreview = ({ height, width, textPosition, theme }) => {
+const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -16,12 +16,12 @@ const SamplePreview = ({ height, width, textPosition, theme }) => {
         height: height,
         displayValue: true,
         fontSize: 14,
-        lineColor: theme === 'dark' ? '#F2F2F2' : '#262626',
-        background: "transparent",
+        lineColor: barColor,
+        background: bgColor,
         textPosition: textPosition
       });
     }
-  }, [height, width, textPosition, theme]);
+  }, [height, width, textPosition, theme, barColor, bgColor]);
 
   return (
     <div className={styles.samplePreview}>
@@ -38,7 +38,9 @@ export default function Sidebar({
   textPosition, setTextPosition, 
   exportFormat, setExportFormat,
   onResizeStart,
-  theme
+  theme,
+  barColor, setBarColor,
+  bgColor, setBgColor
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [inputValue, setInputValue] = useState(numbers.join('\n'));
@@ -69,20 +71,21 @@ export default function Sidebar({
       const folder = zip.folder("barcodes");
 
       for (let num of numbers) {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         JsBarcode(canvas, num, {
           format: "CODE128",
           width: width,
           height: height,
           displayValue: true,
-          fontSize: 16,
+          lineColor: barColor,
+          background: bgColor,
           textPosition: textPosition
         });
 
-        const dataUrl = canvas.toDataURL(`image/${exportFormat === 'jpg' ? 'jpeg' : exportFormat}`);
-        const response = await fetch(dataUrl);
-        const blob = await response.blob();
-        folder.file(`${num}.${exportFormat}`, blob);
+        const format = exportFormat === 'jpg' ? 'jpeg' : exportFormat;
+        const dataUrl = canvas.toDataURL(`image/${format}`, 1.0);
+        const base64Data = dataUrl.split(',')[1];
+        folder.file(`${num}.${exportFormat}`, base64Data, { base64: true });
       }
 
       const content = await zip.generateAsync({ type: "blob" });
@@ -135,32 +138,58 @@ export default function Sidebar({
         <div className={styles.settingItem}>
           <div className={styles.settingLabelRow}>
             <label><Type size={12} /> Text Position</label>
-            <div className={styles.toggleGroup}>
-              <button 
-                onClick={() => setTextPosition('top')} 
-                className={textPosition === 'top' ? styles.active : ''}
-              >Top</button>
-              <button 
-                onClick={() => setTextPosition('bottom')} 
-                className={textPosition === 'bottom' ? styles.active : ''}
-              >Bottom</button>
+          </div>
+          <div className={styles.toggleGroup}>
+            <button 
+              onClick={() => setTextPosition('top')} 
+              className={textPosition === 'top' ? styles.active : ''}
+            >Top</button>
+            <button 
+              onClick={() => setTextPosition('bottom')} 
+              className={textPosition === 'bottom' ? styles.active : ''}
+            >Bottom</button>
+          </div>
+        </div>
+
+        <div className={styles.settingItem}>
+          <div className={styles.settingLabelRow}>
+            <label><ImageIcon size={14} /> Bar & BG Color</label>
+          </div>
+          <div className={styles.colorPickerGroup}>
+            <div className={styles.colorInputWrapper}>
+              <span>Bars:</span>
+              <input 
+                type="color" 
+                value={barColor} 
+                onChange={(e) => setBarColor(e.target.value)}
+                className={styles.colorInput}
+              />
+            </div>
+            <div className={styles.colorInputWrapper}>
+              <span>BG:</span>
+              <input 
+                type="color" 
+                value={bgColor} 
+                onChange={(e) => setBgColor(e.target.value)}
+                className={styles.colorInput}
+              />
             </div>
           </div>
         </div>
 
         <div className={styles.settingItem}>
           <div className={styles.settingLabelRow}>
-            <label><ImageIcon size={12} /> Export Format</label>
-            <select 
-              value={exportFormat} 
-              onChange={(e) => setExportFormat(e.target.value)}
-              className={styles.select}
-            >
-              <option value="png">PNG</option>
-              <option value="jpg">JPG</option>
-              <option value="webp">WebP</option>
-            </select>
+            <label><ImageIcon size={14} /> Export Format</label>
           </div>
+          <select 
+            value={exportFormat} 
+            onChange={(e) => setExportFormat(e.target.value)}
+            className={styles.select}
+          >
+            <option value="png">PNG</option>
+            <option value="jpg">JPG</option>
+            <option value="webp">WebP</option>
+          </select>
         </div>
       </div>
 
@@ -169,6 +198,8 @@ export default function Sidebar({
         width={width} 
         textPosition={textPosition} 
         theme={theme} 
+        barColor={barColor}
+        bgColor={bgColor}
       />
 
       <div className={styles.actionSection}>

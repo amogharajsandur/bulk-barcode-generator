@@ -15,6 +15,7 @@
   position: sticky;
   top: 60px;
   overflow-y: auto;
+  overflow-x: hidden; // Explicitly remove horizontal scrollbar
   @include custom-scrollbar;
   z-index: 50;
 
@@ -23,6 +24,10 @@
     height: auto;
     position: static;
     max-width: none;
+  }
+
+  @media (max-width: 320px) {
+    padding: 1.5rem 1rem;
   }
 }
 
@@ -201,6 +206,49 @@
       }
     }
 
+    .colorPickerGroup {
+      display: flex;
+      gap: 0.75rem;
+
+      .colorInputWrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-secondary);
+        padding: 0.35rem 0.6rem;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+
+        span {
+          font-size: 0.65rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+        }
+
+        .colorInput {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 32px;
+          height: 32px;
+          border: none;
+          border-radius: 8px;
+          padding: 0;
+          cursor: pointer;
+          background: none;
+
+          &::-webkit-color-swatch-wrapper {
+            padding: 0;
+          }
+          &::-webkit-color-swatch {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          }
+        }
+      }
+    }
+
     .select {
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
@@ -229,6 +277,10 @@
   margin: 1rem 0;
   flex-shrink: 0;
   min-height: 120px;
+
+  @media (max-width: 320px) {
+    padding: 1rem 0.5rem;
+  }
 
   .sampleBadge {
     position: absolute;

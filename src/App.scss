@@ -2,9 +2,11 @@
 @import './styles/mixins';
 
 .app-container {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   min-height: 100vh;
+  font-family: var(--font-family);
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .content-wrapper {
@@ -13,6 +15,6 @@
   position: relative;
   
   @media (max-width: 980px) {
-    flex-direction: column;
+    @include flex-column;
   }
 }

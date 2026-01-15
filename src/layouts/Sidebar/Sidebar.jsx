@@ -5,28 +5,29 @@ import { saveAs } from 'file-saver';
 import JsBarcode from 'jsbarcode';
 import styles from './Sidebar.module.scss';
 
-const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor }) => {
-  const canvasRef = useRef(null);
+const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor, font }) => {
+  const imgRef = useRef(null);
 
   useEffect(() => {
-    if (canvasRef.current) {
-      JsBarcode(canvasRef.current, "SAMPLE-123", {
+    if (imgRef.current) {
+      JsBarcode(imgRef.current, "SAMPLE-123", {
         format: "CODE128",
         width: width,
         height: height,
         displayValue: true,
         fontSize: 14,
+        font: font,
         lineColor: barColor,
         background: bgColor,
         textPosition: textPosition
       });
     }
-  }, [height, width, textPosition, theme, barColor, bgColor]);
+  }, [height, width, textPosition, theme, barColor, bgColor, font]);
 
   return (
     <div className={styles.samplePreview}>
       <div className={styles.sampleBadge}>Settings Preview</div>
-      <canvas ref={canvasRef}></canvas>
+      <img ref={imgRef} alt="Sample barcode preview" />
     </div>
   );
 };
@@ -36,6 +37,7 @@ export default function Sidebar({
   height, setHeight, 
   width, setWidth, 
   textPosition, setTextPosition, 
+  font, setFont,
   exportFormat, setExportFormat,
   onResizeStart,
   theme,
@@ -52,8 +54,11 @@ export default function Sidebar({
 
   const handleTextChange = (e) => {
     const val = e.target.value;
+    // Always update raw text first to allow free typing (including newlines)
     setInputValue(val);
-    const items = val.split('\n').filter(line => line.trim() !== "");
+    
+    // Process items for the preview gallery
+    const items = val.split('\n').filter(item => item.trim() !== "");
     setNumbers(items);
   };
 
@@ -77,6 +82,7 @@ export default function Sidebar({
           width: width,
           height: height,
           displayValue: true,
+          font: font,
           lineColor: barColor,
           background: bgColor,
           textPosition: textPosition
@@ -97,6 +103,20 @@ export default function Sidebar({
     }
   };
 
+  const fontOptions = [
+    { label: 'Sans Serif', value: 'sans-serif' },
+    { label: 'Serif', value: 'serif' },
+    { label: 'Fixed Width', value: 'monospace' },
+    { label: 'Wide', value: '"Arial Black", sans-serif' },
+    { label: 'Narrow', value: '"Arial Narrow", sans-serif' },
+    { label: 'Comic Sans MS', value: '"Comic Sans MS", cursive' },
+    { label: 'Garamond', value: 'Garamond, serif' },
+    { label: 'Georgia', value: 'Georgia, serif' },
+    { label: 'Tahoma', value: 'Tahoma, sans-serif' },
+    { label: 'Trebuchet MS', value: '"Trebuchet MS", sans-serif' },
+    { label: 'Verdana', value: 'Verdana, sans-serif' }
+  ];
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.resizeHandle} onMouseDown={onResizeStart}>
@@ -105,12 +125,13 @@ export default function Sidebar({
 
       <div className={styles.inputSection}>
         <div className={styles.labelRow}>
-          <label>Barcode Data</label>
-          <button onClick={clearAll} className={styles.clearBtn}>
+          <label htmlFor="barcode-input">Barcode Data</label>
+          <button onClick={clearAll} className={styles.clearBtn} aria-label="Clear all barcodes">
             <Trash2 size={12} /> Clear All
           </button>
         </div>
         <textarea 
+          id="barcode-input"
           className={styles.textarea}
           placeholder="Enter values here&#10;One per line..."
           onChange={handleTextChange}
@@ -121,32 +142,69 @@ export default function Sidebar({
       <div className={styles.settingsSection}>
         <div className={styles.settingItem}>
           <div className={styles.settingLabelRow}>
-            <label><Ruler size={12} /> Barcode Height</label>
+            <label htmlFor="height-input"><Ruler size={12} /> Barcode Height</label>
             <span className={styles.valueBadge}>{height}px</span>
           </div>
-          <input type="range" min="20" max="200" value={height} onChange={(e) => setHeight(parseInt(e.target.value))} className={styles.rangeInput} />
+          <input 
+            id="height-input"
+            type="range" 
+            min="20" 
+            max="200" 
+            value={height} 
+            onChange={(e) => setHeight(parseInt(e.target.value))} 
+            className={styles.rangeInput} 
+          />
         </div>
 
         <div className={styles.settingItem}>
           <div className={styles.settingLabelRow}>
-            <label><MoveHorizontal size={12} /> Barcode Width</label>
+            <label htmlFor="width-input"><MoveHorizontal size={12} /> Barcode Width</label>
             <span className={styles.valueBadge}>{width}px</span>
           </div>
-          <input type="range" min="1" max="4" step="0.1" value={width} onChange={(e) => setWidth(parseFloat(e.target.value))} className={styles.rangeInput} />
+          <input 
+            id="width-input"
+            type="range" 
+            min="1" 
+            max="4" 
+            step="0.1" 
+            value={width} 
+            onChange={(e) => setWidth(parseFloat(e.target.value))} 
+            className={styles.rangeInput} 
+          />
+        </div>
+
+        <div className={styles.settingItem}>
+          <div className={styles.settingLabelRow}>
+            <label htmlFor="font-select"><Type size={12} /> Barcode Font</label>
+          </div>
+          <select 
+            id="font-select"
+            value={font} 
+            onChange={(e) => setFont(e.target.value)}
+            className={styles.select}
+          >
+            {fontOptions.map(opt => (
+              <option key={opt.value} value={opt.value} style={{ fontFamily: opt.value }}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className={styles.settingItem}>
           <div className={styles.settingLabelRow}>
             <label><Type size={12} /> Text Position</label>
           </div>
-          <div className={styles.toggleGroup}>
+          <div className={styles.toggleGroup} role="group" aria-label="Text Position">
             <button 
               onClick={() => setTextPosition('top')} 
               className={textPosition === 'top' ? styles.active : ''}
+              aria-pressed={textPosition === 'top'}
             >Top</button>
             <button 
               onClick={() => setTextPosition('bottom')} 
               className={textPosition === 'bottom' ? styles.active : ''}
+              aria-pressed={textPosition === 'bottom'}
             >Bottom</button>
           </div>
         </div>
@@ -157,8 +215,9 @@ export default function Sidebar({
           </div>
           <div className={styles.colorPickerGroup}>
             <div className={styles.colorInputWrapper}>
-              <span>Bars:</span>
+              <label htmlFor="bar-color">Bars:</label>
               <input 
+                id="bar-color"
                 type="color" 
                 value={barColor} 
                 onChange={(e) => setBarColor(e.target.value)}
@@ -166,8 +225,9 @@ export default function Sidebar({
               />
             </div>
             <div className={styles.colorInputWrapper}>
-              <span>BG:</span>
+              <label htmlFor="bg-color">BG:</label>
               <input 
+                id="bg-color"
                 type="color" 
                 value={bgColor} 
                 onChange={(e) => setBgColor(e.target.value)}
@@ -179,9 +239,10 @@ export default function Sidebar({
 
         <div className={styles.settingItem}>
           <div className={styles.settingLabelRow}>
-            <label><ImageIcon size={14} /> Export Format</label>
+            <label htmlFor="export-format"><ImageIcon size={14} /> Export Format</label>
           </div>
           <select 
+            id="export-format"
             value={exportFormat} 
             onChange={(e) => setExportFormat(e.target.value)}
             className={styles.select}
@@ -200,6 +261,7 @@ export default function Sidebar({
         theme={theme} 
         barColor={barColor}
         bgColor={bgColor}
+        font={font}
       />
 
       <div className={styles.actionSection}>

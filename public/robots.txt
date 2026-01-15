@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Optimization for Search Engines and AI
+Sitemap: https://bulk-barcode-generator.vercel.app/sitemap.xml
+Host: https://bulk-barcode-generator.vercel.app/
+
+# Specific rules for better crawling
+Crawl-delay: 1

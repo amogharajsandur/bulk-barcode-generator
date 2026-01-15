@@ -2,26 +2,23 @@
 @import '../../styles/mixins';
 
 .header {
-  height: 60px;
+  height: 72px;
   @include glass;
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
+  z-index: 100; // Reverted to lower z-index so it doesn't overlap modals
+  @include flex-center;
 
   @media (max-width: 480px) {
-    height: 70px;
+    height: 80px;
   }
 }
 
 .container {
   width: 100%;
-  padding: 0 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 0 2.5rem;
+  @include flex-between;
 
   @media (max-width: 768px) {
     padding: 0 1.5rem;
@@ -31,21 +28,13 @@
     padding: 0 1rem;
     gap: 0.5rem;
   }
-
-  @media (max-width: 320px) {
-    padding: 0 0.75rem;
-  }
 }
 
 .left {
   display: flex;
   align-items: center;
   gap: 1rem;
-  min-width: 0; // Allow title to shrink
-
-  @media (max-width: 480px) {
-    gap: 0.75rem;
-  }
+  min-width: 0;
 
   @media (max-width: 320px) {
     gap: 0.5rem;
@@ -60,20 +49,9 @@
   @include flex-center;
   flex-shrink: 0;
 
-  @media (max-width: 480px) {
-    padding: 0.4rem;
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  @media (max-width: 320px) {
-    padding: 0.35rem;
-    svg {
-      width: 18px;
-      height: 18px;
-    }
+  svg {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -88,14 +66,6 @@
 
   @media (max-width: 480px) {
     font-size: 1.1rem;
-  }
-
-  @media (max-width: 375px) {
-    font-size: 1rem;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 0.9rem;
   }
 }
 
@@ -116,35 +86,13 @@
     color: var(--accent-color);
     border-color: var(--accent-color);
   }
-
-  @media (max-width: 480px) {
-    width: 26px;
-    height: 26px;
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  @media (max-width: 320px) {
-    width: 22px;
-    height: 22px;
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-  }
 }
 
 .right {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1.25rem;
   flex-shrink: 0;
-
-  @media (max-width: 375px) {
-    gap: 0.5rem;
-  }
 }
 
 .shareBtn, .themeToggle {
@@ -175,18 +123,5 @@
   @media (max-width: 480px) {
     width: 34px;
     height: 34px;
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  @media (max-width: 320px) {
-    width: 30px;
-    height: 30px;
-    svg {
-      width: 14px;
-      height: 14px;
-    }
   }
 }

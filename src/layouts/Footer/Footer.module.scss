@@ -4,29 +4,30 @@
 .footer {
   @include glass;
   border-top: 1px solid var(--border-color);
-  padding: 3rem 0;
+  padding: 2.25rem 0;
   z-index: 100;
+
+  @media (max-width: 480px) {
+    padding: 1.75rem 0;
+  }
 }
 
 .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-between;
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
   max-width: 1400px;
   margin-inline: auto;
 
   @media (max-width: 980px) {
-    flex-direction: column;
+    @include flex-column;
     gap: 2rem;
     text-align: center;
   }
 }
 
 .left {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   gap: 0.5rem;
 
   @media (max-width: 980px) {
@@ -34,9 +35,10 @@
   }
   
   p {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 
     .devLink {
       color: var(--accent-color);
@@ -51,9 +53,9 @@
   }
 
   .stackInfo {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-secondary);
-    opacity: 0.6;
+    opacity: 0.75;
     font-weight: 500;
     letter-spacing: 0.02em;
   }
@@ -67,11 +69,11 @@
   @media (max-width: 980px) {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.25rem;
   }
 
   .link {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--text-secondary);
     @include transition;
     font-weight: 600;
@@ -89,12 +91,12 @@
   .githubLink {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+    gap: 0.6rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     color: var(--text-primary);
     background: var(--bg-secondary);
-    padding: 0.5rem 1rem;
+    padding: 0.45rem 1rem;
     border-radius: 12px;
     border: 1px solid var(--border-color);
     @include transition;
@@ -105,6 +107,7 @@
       color: white;
       border-color: var(--accent-color);
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(orange, 0.2);
     }
   }
 

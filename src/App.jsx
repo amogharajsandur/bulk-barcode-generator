@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.scss';
 
-import { Trash2, Ruler, DownloadCloud, Loader, MoveHorizontal, Type, Image as ImageIcon, Share2, Twitter, Linkedin, Facebook, MessageCircle, Copy } from 'lucide-react';
+import { Share2, Twitter, Linkedin, Facebook, MessageCircle, Copy } from 'lucide-react';
 import Header from './layouts/Header/Header';
 import Sidebar from './layouts/Sidebar/Sidebar';
 import Main from "./sections/Main";
@@ -13,28 +13,37 @@ export default function App() {
   const [height, setHeight] = useState(50);
   const [width, setWidth] = useState(2);
   const [textPosition, setTextPosition] = useState('bottom');
+  const [font, setFont] = useState('Sans Serif');
   const [exportFormat, setExportFormat] = useState('png');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [barColor, setBarColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#FFFFFF');
   const [sidebarWidth, setSidebarWidth] = useState(400);
   const [isResizing, setIsResizing] = useState(false);
-  const [modalConfig, setModalConfig] = useState({ isOpen: false, type: 'info' });
+  const [modalConfig, setModalConfig] = useState(() => {
+    const hasVisited = localStorage.getItem('hasVisitedV1.3.0');
+    return { isOpen: !hasVisited, type: 'info' };
+  });
+
+  const closeModal = () => {
+    setModalConfig({ ...modalConfig, isOpen: false });
+    localStorage.setItem('hasVisitedV1.3.0', 'true');
+  };
 
   const openModal = (type) => setModalConfig({ isOpen: true, type });
-  const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
 
   const modalData = {
     info: {
       title: 'About Bulk Barcode Generator',
       content: (
         <>
-          <span className="versionTag">v1.1.0-stable</span>
-          <h3>What's New</h3>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            What's New <span className="versionTag" style={{ margin: 0, fontSize: '0.65rem' }}>v1.3.0</span>
+          </h3>
           <ul>
-            <li><strong>Custom Colors</strong>: Pick your own Bar & BG colors.</li>
-            <li><strong>Better Mobile UI</strong>: Fully optimized for small screens.</li>
-            <li><strong>Smart Naming</strong>: Files are named after their content.</li>
+            <li><strong>UI Refinements</strong>: Optimized spacing and typography for a cleaner look.</li>
+            <li><strong>Optimized Performance</strong>: Enhanced rendering engine for large batches.</li>
+            <li><strong>Improved SEO</strong>: Better crawlability for search engines and AI assistants.</li>
           </ul>
 
           <hr className="modal-divider" />
@@ -48,6 +57,17 @@ export default function App() {
             <li>Adjust settings like size, orientation, and colors.</li>
             <li>Download as individual files or a combined ZIP.</li>
           </ul>
+
+          <h3>Key Features</h3>
+          <ul>
+            <li><strong>Bulk Generation</strong>: Paste thousands of lines and generate instantly.</li>
+            <li><strong>Real-time Preview</strong>: See your changes immediately as you type.</li>
+            <li><strong>Customization</strong>: Full control over size, colors, fonts, and positions.</li>
+            <li><strong>Privacy First</strong>: 100% local processing; no data ever leaves your device.</li>
+            <li><strong>Batch Export</strong>: Download all barcodes in a single ZIP file.</li>
+          </ul>
+          
+          <hr className="modal-divider" />
 
           <h3>Developer Info</h3>
           <p>Designed and Developed by <strong>Amogha Raj Sandur</strong>.</p>
@@ -127,8 +147,7 @@ export default function App() {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const resize = (e) => {
+  const resize = useCallback((e) => {
     if (isResizing) {
       const newWidth = e.clientX;
       const maxWidth = window.innerWidth / 2;
@@ -136,7 +155,7 @@ export default function App() {
         setSidebarWidth(newWidth);
       }
     }
-  };
+  }, [isResizing, setSidebarWidth]);
 
   const startResizing = (e) => {
     setIsResizing(true);
@@ -189,6 +208,8 @@ export default function App() {
           setWidth={setWidth}
           textPosition={textPosition}
           setTextPosition={setTextPosition}
+          font={font}
+          setFont={setFont}
           exportFormat={exportFormat}
           setExportFormat={setExportFormat}
           onResizeStart={startResizing}
@@ -199,11 +220,12 @@ export default function App() {
           setBgColor={setBgColor}
         />
         <Main 
-          key={numbers.length}
+          key={`${numbers.length}-${font}`}
           numbers={numbers} 
           height={height} 
           width={width}
           textPosition={textPosition}
+          font={font}
           theme={theme} 
           exportFormat={exportFormat}
           barColor={barColor}

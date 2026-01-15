@@ -5,7 +5,7 @@
   flex: 1;
   padding: 3rem;
   background-color: var(--bg-primary);
-  min-width: 0; // Prevent flex item from overflowing
+  min-width: 0; 
 
   @media (max-width: 980px) {
     padding: 2rem 1rem;
@@ -13,9 +13,7 @@
 }
 
 .mainHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-between;
   margin-bottom: 2rem;
   max-width: 1400px;
   margin-inline: auto;
@@ -37,8 +35,7 @@
   }
 
   .badge {
-    display: flex;
-    align-items: center;
+    @include flex-center;
     gap: 0.5rem;
     background: var(--bg-secondary);
     padding: 0.5rem 1rem;
@@ -72,18 +69,13 @@
 }
 
 .barcodeCard {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  padding: 2.5rem 1.5rem 1.5rem;
-  border-radius: 1.5rem;
-  display: flex;
-  flex-direction: column;
+  @include card;
+  @include flex-column;
   align-items: center;
   justify-content: center;
   @include transition;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow);
   min-height: 180px;
 
   &::before {
@@ -152,7 +144,7 @@
     transform: translateY(0);
   }
 
-  canvas {
+  img {
     max-width: 100%;
     height: auto;
   }
@@ -171,40 +163,46 @@
 .emptyState {
   grid-column: 1 / -1;
   padding: 8rem 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
+  @include flex-column;
   text-align: center;
 
   .iconContainer {
     position: relative;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    @include flex-center;
 
     .iconBox {
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       background: var(--accent-color);
       opacity: 0.1;
-      border-radius: 50%;
+      border-radius: 30px;
       @include flex-center;
     }
 
-    .layersIcon {
+    .barcodeGraphic {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       color: var(--accent-color);
+      @include flex-center;
+      
+      svg {
+        width: 64px;
+        height: 64px;
+      }
     }
 
-    .plusBox {
+    .plusBadge {
       position: absolute;
-      bottom: 0;
-      right: 0;
+      bottom: -5px;
+      right: -5px;
       background: var(--bg-secondary);
-      padding: 0.5rem;
-      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       box-shadow: var(--shadow);
       border: 1px solid var(--border-color);
       color: var(--accent-color);
@@ -213,22 +211,23 @@
   }
 
   h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 800;
     color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
   }
 
   p {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
+    font-size: 1rem;
     color: var(--text-secondary);
-    max-width: 250px;
+    max-width: 300px;
+    line-height: 1.5;
   }
 }
 
 .loadMoreContainer {
-  display: flex;
-  justify-content: center;
+  @include flex-center;
   margin-top: 3rem;
   padding-bottom: 2rem;
 }

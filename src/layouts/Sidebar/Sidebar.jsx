@@ -4,8 +4,10 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import JsBarcode from 'jsbarcode';
 import styles from './Sidebar.module.scss';
+import { fontOptions } from '../../data/fontOptions';
+import { getWatermarkedCanvas } from '../../utils/barcodeUtils';
 
-const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor, font }) => {
+const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor, font, prefix, suffix, startSeparator, endSeparator, exportFormat }) => {
   const imgRef = useRef(null);
 
   useEffect(() => {
@@ -24,10 +26,16 @@ const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor, 
     }
   }, [height, width, textPosition, theme, barColor, bgColor, font]);
 
+  const fileNamePreview = `${prefix}${startSeparator}SAMPLE-123${endSeparator}${suffix}.${exportFormat}`;
+
   return (
     <div className={styles.samplePreview}>
       <div className={styles.sampleBadge}>Settings Preview</div>
       <img ref={imgRef} alt="Sample barcode preview" />
+      <div className={styles.fileNamePreview}>
+        <span>Filename Preview:</span>
+        <code>{fileNamePreview}</code>
+      </div>
     </div>
   );
 };
@@ -39,6 +47,10 @@ export default function Sidebar({
   textPosition, setTextPosition, 
   font, setFont,
   exportFormat, setExportFormat,
+  prefix, setPrefix,
+  suffix, setSuffix,
+  startSeparator, setStartSeparator,
+  endSeparator, setEndSeparator,
   onResizeStart,
   theme,
   barColor, setBarColor,
@@ -75,27 +87,31 @@ export default function Sidebar({
       const zip = new JSZip();
       const folder = zip.folder("barcodes");
 
+      // Add a credits file for marketing metadata
+      const credits = `Generated using Bulk Barcode Generator\n--------------------------------------\nURL: https://bulk-barcode-generator.vercel.app/\nDeveloper: Amogha Raj Sandur\n--------------------------------------\nThank you for using our local-first, privacy-focused barcode tool!`;
+      zip.file("READ_ME_CREDITS.txt", credits);
+
       for (let num of numbers) {
-        const canvas = document.createElement("canvas");
-        JsBarcode(canvas, num, {
-          format: "CODE128",
-          width: width,
-          height: height,
-          displayValue: true,
-          font: font,
-          lineColor: barColor,
-          background: bgColor,
-          textPosition: textPosition
+        const canvas = getWatermarkedCanvas({
+          value: num,
+          height,
+          width,
+          font,
+          barColor,
+          bgColor,
+          textPosition
         });
 
         const format = exportFormat === 'jpg' ? 'jpeg' : exportFormat;
         const dataUrl = canvas.toDataURL(`image/${format}`, 1.0);
         const base64Data = dataUrl.split(',')[1];
-        folder.file(`${num}.${exportFormat}`, base64Data, { base64: true });
+        
+        const fileName = `${prefix}${startSeparator}${num}${endSeparator}${suffix}.${exportFormat}`;
+        folder.file(fileName, base64Data, { base64: true });
       }
 
       const content = await zip.generateAsync({ type: "blob" });
-      saveAs(content, `barcodes_${new Date().getTime()}.zip`);
+      saveAs(content, `downloaded_from_bulk_barcode_generator.zip`);
     } catch (err) {
       console.error("ZIP Generation Error:", err);
     } finally {
@@ -103,19 +119,6 @@ export default function Sidebar({
     }
   };
 
-  const fontOptions = [
-    { label: 'Sans Serif', value: 'sans-serif' },
-    { label: 'Serif', value: 'serif' },
-    { label: 'Fixed Width', value: 'monospace' },
-    { label: 'Wide', value: '"Arial Black", sans-serif' },
-    { label: 'Narrow', value: '"Arial Narrow", sans-serif' },
-    { label: 'Comic Sans MS', value: '"Comic Sans MS", cursive' },
-    { label: 'Garamond', value: 'Garamond, serif' },
-    { label: 'Georgia', value: 'Georgia, serif' },
-    { label: 'Tahoma', value: 'Tahoma, sans-serif' },
-    { label: 'Trebuchet MS', value: '"Trebuchet MS", sans-serif' },
-    { label: 'Verdana', value: 'Verdana, sans-serif' }
-  ];
 
   return (
     <aside className={styles.sidebar}>
@@ -252,6 +255,43 @@ export default function Sidebar({
             <option value="webp">WebP</option>
           </select>
         </div>
+
+        <div className={styles.settingItem}>
+          <div className={styles.settingLabelRow}>
+            <label><Type size={12} /> File Naming</label>
+          </div>
+          <div className={styles.namingGrid} label-for="Prefix, Sep, Content, Sep, Suffix">
+            <input 
+              type="text" 
+              placeholder="Prefix" 
+              value={prefix} 
+              onChange={(e) => setPrefix(e.target.value)} 
+              title="Filename Prefix"
+            />
+            <input 
+              type="text" 
+              placeholder="(-)" 
+              value={startSeparator} 
+              onChange={(e) => setStartSeparator(e.target.value)}
+              title="Start Separator"
+            />
+            <div className={styles.namingPreview}>Line Content</div>
+            <input 
+              type="text" 
+              placeholder="(_)" 
+              value={endSeparator} 
+              onChange={(e) => setEndSeparator(e.target.value)}
+              title="End Separator"
+            />
+            <input 
+              type="text" 
+              placeholder="Suffix" 
+              value={suffix} 
+              onChange={(e) => setSuffix(e.target.value)}
+              title="Filename Suffix"
+            />
+          </div>
+        </div>
       </div>
 
       <SamplePreview 
@@ -262,6 +302,11 @@ export default function Sidebar({
         barColor={barColor}
         bgColor={bgColor}
         font={font}
+        prefix={prefix}
+        suffix={suffix}
+        startSeparator={startSeparator}
+        endSeparator={endSeparator}
+        exportFormat={exportFormat}
       />
 
       <div className={styles.actionSection}>

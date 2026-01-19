@@ -1,19 +1,22 @@
 import { useRef, useState, useEffect } from 'react';
 import JsBarcode from 'jsbarcode';
-import { Layers, Plus, ChevronDown, Download, Clipboard, Check } from 'lucide-react';
+import { Plus, ChevronDown, Download, Clipboard } from 'lucide-react';
 import styles from './Main.module.scss';
+import { getWatermarkedCanvas } from '../utils/barcodeUtils';
 
-const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportFormat, barColor, bgColor, font }) => {
+const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportFormat, barColor, bgColor, font, prefix, suffix, startSeparator, endSeparator }) => {
   const imgRef = useRef(null);
 
   const copyToClipboard = async () => {
-    if (!imgRef.current) return;
     try {
-      const response = await fetch(imgRef.current.src);
-      const blob = await response.blob();
-      const item = new ClipboardItem({ 'image/png': blob });
-      await navigator.clipboard.write([item]);
-      alert(`Barcode "${value}" copied to clipboard!`);
+      const canvas = getWatermarkedCanvas({
+        value, height, width, font, barColor, bgColor, textPosition
+      });
+      canvas.toBlob(async (blob) => {
+        const item = new ClipboardItem({ 'image/png': blob });
+        await navigator.clipboard.write([item]);
+        alert(`Barcode "${value}" copied to clipboard!`);
+      }, 'image/png');
     } catch (err) {
       console.error("Clipboard Error:", err);
       alert("Failed to copy image. Your browser may not support this feature.");
@@ -21,10 +24,16 @@ const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportF
   };
 
   const downloadSingle = () => {
-    if (!imgRef.current) return;
+    const canvas = getWatermarkedCanvas({
+      value, height, width, font, barColor, bgColor, textPosition
+    });
+    const format = exportFormat === 'jpg' ? 'jpeg' : exportFormat;
+    const dataUrl = canvas.toDataURL(`image/${format}`, 1.0);
+    const fileName = `${prefix}${startSeparator}${value}${endSeparator}${suffix}.${exportFormat}`;
+    
     const link = document.createElement('a');
-    link.href = imgRef.current.src;
-    link.download = `${value}.${exportFormat}`;
+    link.href = dataUrl;
+    link.download = fileName;
     link.click();
   };
 
@@ -66,7 +75,10 @@ const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportF
   );
 };
 
-export default function Main({ numbers, height, width, textPosition, theme, exportFormat, barColor, bgColor, font }) {
+export default function Main({ 
+  numbers, height, width, textPosition, theme, exportFormat, barColor, bgColor, font,
+  prefix, suffix, startSeparator, endSeparator 
+}) {
   const [visibleCount, setVisibleCount] = useState(30);
 
   const loadMore = () => {
@@ -120,6 +132,10 @@ export default function Main({ numbers, height, width, textPosition, theme, expo
                 exportFormat={exportFormat}
                 barColor={barColor}
                 bgColor={bgColor}
+                prefix={prefix}
+                suffix={suffix}
+                startSeparator={startSeparator}
+                endSeparator={endSeparator}
               />
             ))}
           </>

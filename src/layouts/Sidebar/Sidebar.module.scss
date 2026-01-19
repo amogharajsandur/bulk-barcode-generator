@@ -251,6 +251,46 @@
       font-weight: 700;
       cursor: pointer;
     }
+
+    .namingGrid {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+
+      input {
+        @include input-base;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.7rem;
+        text-align: center;
+        width: 100%;
+        min-width: 0;
+        flex: 1;
+
+        &::placeholder {
+          font-size: 0.6rem;
+          opacity: 0.4;
+        }
+
+        &:nth-child(2), &:nth-child(4) {
+          flex: 0.6;
+          background: var(--bg-secondary);
+        }
+      }
+
+      .namingPreview {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--accent-color);
+        background: var(--bg-secondary);
+        height: 32px;
+        @include flex-center;
+        padding: 0 0.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        white-space: nowrap;
+        opacity: 0.8;
+      }
+    }
   }
 }
 
@@ -290,6 +330,35 @@
     max-width: 100%;
     height: auto;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  }
+
+  .fileNamePreview {
+    margin-top: 0.5rem;
+    @include flex-column;
+    align-items: center;
+    gap: 0.25rem;
+    width: 100%;
+
+    span {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-color);
+      background: var(--bg-secondary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      word-break: break-all;
+      text-align: center;
+      max-width: 100%;
+    }
   }
 }
 

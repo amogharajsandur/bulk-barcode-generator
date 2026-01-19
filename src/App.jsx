@@ -1,12 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import './App.scss';
 
-import { Share2, Twitter, Linkedin, Facebook, MessageCircle, Copy } from 'lucide-react';
 import Header from './layouts/Header/Header';
 import Sidebar from './layouts/Sidebar/Sidebar';
 import Main from "./sections/Main";
 import Footer from './layouts/Footer/Footer';
 import Modal from './components/Modal/Modal';
+
+import { modalInfoData } from './data/modalInfo';
+import { modalShareData } from './data/modalShare';
+import { legalTData } from './data/legalT';
+import { legalPData } from './data/legalP';
+
+import { APP_CONFIG } from './data/config';
 
 export default function App() {
   const [numbers, setNumbers] = useState([]);
@@ -15,136 +21,33 @@ export default function App() {
   const [textPosition, setTextPosition] = useState('bottom');
   const [font, setFont] = useState('Sans Serif');
   const [exportFormat, setExportFormat] = useState('png');
+  const [sidebarWidth, setSidebarWidth] = useState(400);
+  const [isResizing, setIsResizing] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [barColor, setBarColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#FFFFFF');
-  const [sidebarWidth, setSidebarWidth] = useState(400);
-  const [isResizing, setIsResizing] = useState(false);
+  const [prefix, setPrefix] = useState('');
+  const [suffix, setSuffix] = useState('');
+  const [startSeparator, setStartSeparator] = useState('');
+  const [endSeparator, setEndSeparator] = useState('');
+
   const [modalConfig, setModalConfig] = useState(() => {
-    const hasVisited = localStorage.getItem('hasVisitedV1.3.0');
+    const hasVisited = localStorage.getItem(APP_CONFIG.STORAGE_KEY);
     return { isOpen: !hasVisited, type: 'info' };
   });
 
   const closeModal = () => {
     setModalConfig({ ...modalConfig, isOpen: false });
-    localStorage.setItem('hasVisitedV1.3.0', 'true');
+    localStorage.setItem(APP_CONFIG.STORAGE_KEY, 'true');
   };
 
   const openModal = (type) => setModalConfig({ isOpen: true, type });
 
   const modalData = {
-    info: {
-      title: 'About Bulk Barcode Generator',
-      content: (
-        <>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            What's New <span className="versionTag" style={{ margin: 0, fontSize: '0.65rem' }}>v1.3.0</span>
-          </h3>
-          <ul>
-            <li><strong>UI Refinements</strong>: Optimized spacing and typography for a cleaner look.</li>
-            <li><strong>Optimized Performance</strong>: Enhanced rendering engine for large batches.</li>
-            <li><strong>Improved SEO</strong>: Better crawlability for search engines and AI assistants.</li>
-          </ul>
-
-          <hr className="modal-divider" />
-
-          <h3>About</h3>
-          <p>A fast, browser-based bulk barcode generator. All processing happens locally on your device — your data never leaves your browser.</p>
-
-          <h3>How to Use</h3>
-          <ul>
-            <li>Paste your data list in the sidebar (one per line).</li>
-            <li>Adjust settings like size, orientation, and colors.</li>
-            <li>Download as individual files or a combined ZIP.</li>
-          </ul>
-
-          <h3>Key Features</h3>
-          <ul>
-            <li><strong>Bulk Generation</strong>: Paste thousands of lines and generate instantly.</li>
-            <li><strong>Real-time Preview</strong>: See your changes immediately as you type.</li>
-            <li><strong>Customization</strong>: Full control over size, colors, fonts, and positions.</li>
-            <li><strong>Privacy First</strong>: 100% local processing; no data ever leaves your device.</li>
-            <li><strong>Batch Export</strong>: Download all barcodes in a single ZIP file.</li>
-          </ul>
-          
-          <hr className="modal-divider" />
-
-          <h3>Developer Info</h3>
-          <p>Designed and Developed by <strong>Amogha Raj Sandur</strong>.</p>
-          <div className="modal-links-grid">
-            <a href="https://www.linkedin.com/in/amogharajsandur/" target="_blank" rel="noopener noreferrer" className="link-item">LinkedIn Profile</a>
-            <a href="https://github.com/amogharajsandur/bulk-barcode-generator" target="_blank" rel="noopener noreferrer" className="link-item">GitHub Repository</a>
-          </div>
-
-          <hr className="modal-divider" />
-
-          <div className="modal-actions-bottom">
-            <a href="https://github.com/amogharajsandur/bulk-barcode-generator/issues" target="_blank" rel="noopener noreferrer" className="btn-primary-sm">
-              Report Issue / Request Feature
-            </a>
-          </div>
-        </>
-      )
-    },
-    share: {
-      title: 'Share this tool',
-      content: (
-        <div className="share-modal-content">
-          <p>Help others generate barcodes easily by sharing this tool!</p>
-          <div className="share-url-box">
-            <input readOnly value="https://bulk-barcode-generator.vercel.app/" />
-            <button onClick={() => {
-              navigator.clipboard.writeText("https://bulk-barcode-generator.vercel.app/");
-              alert("Link copied to clipboard!");
-            }} className="copy-btn">
-              <Copy size={16} /> Copy
-            </button>
-          </div>
-          <div className="share-actions-grid">
-            <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent('Check out this Bulk Barcode Generator: https://bulk-barcode-generator.vercel.app/')}`} target="_blank" rel="noopener noreferrer" className="share-btn whatsapp">
-              <MessageCircle size={18} /> <span>WhatsApp</span>
-            </a>
-            <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://bulk-barcode-generator.vercel.app/')}`} target="_blank" rel="noopener noreferrer" className="share-btn facebook">
-              <Facebook size={18} /> <span>Facebook</span>
-            </a>
-            <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent('https://bulk-barcode-generator.vercel.app/')}&text=${encodeURIComponent('Check out this awesome Bulk Barcode Generator!')}`} target="_blank" rel="noopener noreferrer" className="share-btn twitter">
-              <Twitter size={18} /> <span>Twitter (X)</span>
-            </a>
-            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://bulk-barcode-generator.vercel.app/')}`} target="_blank" rel="noopener noreferrer" className="share-btn linkedin">
-              <Linkedin size={18} /> <span>LinkedIn</span>
-            </a>
-          </div>
-        </div>
-      )
-    },
-    tos: {
-      title: 'Terms of Service',
-      content: (
-        <>
-          <p>By using Bulk Barcode Generator, you agree to the following terms:</p>
-          <h3>Usage Rights</h3>
-          <p>This tool is open-source and free to use for both personal and commercial projects. No attribution is required, though appreciated.</p>
-          <h3>Disclaimer</h3>
-          <p>The software is provided "as is", without warranty of any kind. The author is not responsible for any data loss or incorrect barcode generation that may lead to scanning errors.</p>
-          <h3>Privacy</h3>
-          <p>All barcode generation happens locally in your browser. No data is ever uploaded to a server.</p>
-        </>
-      )
-    },
-    privacy: {
-      title: 'Privacy Policy',
-      content: (
-        <>
-          <p>Your privacy is our priority. Here is how we handle your data:</p>
-          <h3>Local Processing</h3>
-          <p>Maximum privacy: Every piece of data you enter is processed 100% locally on your machine using JavaScript. We don't have a backend to store your data.</p>
-          <h3>No Tracking</h3>
-          <p>We do not use cookies or tracking scripts that identify you personally. Your theme preference is saved in your browser's local storage.</p>
-          <h3>Open Source</h3>
-          <p>Since the project is open source, you can audit the code yourself to verify these privacy claims.</p>
-        </>
-      )
-    }
+    info: modalInfoData,
+    share: modalShareData,
+    tos: legalTData,
+    privacy: legalPData
   };
 
   const resize = useCallback((e) => {
@@ -218,6 +121,14 @@ export default function App() {
           setBarColor={setBarColor}
           bgColor={bgColor}
           setBgColor={setBgColor}
+          prefix={prefix}
+          setPrefix={setPrefix}
+          suffix={suffix}
+          setSuffix={setSuffix}
+          startSeparator={startSeparator}
+          setStartSeparator={setStartSeparator}
+          endSeparator={endSeparator}
+          setEndSeparator={setEndSeparator}
         />
         <Main 
           key={`${numbers.length}-${font}`}
@@ -230,6 +141,10 @@ export default function App() {
           exportFormat={exportFormat}
           barColor={barColor}
           bgColor={bgColor}
+          prefix={prefix}
+          suffix={suffix}
+          startSeparator={startSeparator}
+          endSeparator={endSeparator}
         />
       </div>
       <Footer onTosClick={() => openModal('tos')} onPrivacyClick={() => openModal('privacy')} />

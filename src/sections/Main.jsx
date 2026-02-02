@@ -1,10 +1,10 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo, memo } from 'react';
 import JsBarcode from 'jsbarcode';
 import { Plus, ChevronDown, Download, Clipboard } from 'lucide-react';
 import styles from './Main.module.scss';
 import { getWatermarkedCanvas } from '../utils/barcodeUtils';
 
-const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportFormat, barColor, bgColor, font, prefix, suffix, startSeparator, endSeparator }) => {
+const BarcodeCard = memo(({ value, height, width, textPosition, index, theme, exportFormat, barColor, bgColor, font, prefix, suffix, startSeparator, endSeparator }) => {
   const imgRef = useRef(null);
 
   const copyToClipboard = async () => {
@@ -73,7 +73,9 @@ const BarcodeCard = ({ value, height, width, textPosition, index, theme, exportF
       <img ref={imgRef} alt={`Barcode for ${value}`} />
     </div>
   );
-};
+});
+
+BarcodeCard.displayName = 'BarcodeCard';
 
 export default function Main({ 
   numbers, height, width, textPosition, theme, exportFormat, barColor, bgColor, font,
@@ -85,7 +87,7 @@ export default function Main({
     setVisibleCount(prev => prev + 30);
   };
 
-  const visibleNumbers = numbers.slice(0, visibleCount);
+  const visibleNumbers = useMemo(() => numbers.slice(0, visibleCount), [numbers, visibleCount]);
 
   return (
     <main className={styles.main}>

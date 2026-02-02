@@ -1,0 +1,16 @@
+{
+  "short_name": "BarcodeGen",
+  "name": "Bulk Barcode Generator",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ffa500",
+  "background_color": "#ffffff",
+  "description": "Professional bulk barcode generator that works 100% locally in your browser. Generate thousands of barcodes instantly."
+}

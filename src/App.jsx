@@ -14,6 +14,13 @@ import { legalPData } from './data/legalP';
 
 import { APP_CONFIG } from './data/config';
 
+const modalData = {
+  info: modalInfoData,
+  share: modalShareData,
+  tos: legalTData,
+  privacy: legalPData
+};
+
 export default function App() {
   const [numbers, setNumbers] = useState([]);
   const [height, setHeight] = useState(50);
@@ -42,13 +49,6 @@ export default function App() {
   };
 
   const openModal = (type) => setModalConfig({ isOpen: true, type });
-
-  const modalData = {
-    info: modalInfoData,
-    share: modalShareData,
-    tos: legalTData,
-    privacy: legalPData
-  };
 
   const resize = useCallback((e) => {
     if (isResizing) {
@@ -131,7 +131,6 @@ export default function App() {
           setEndSeparator={setEndSeparator}
         />
         <Main 
-          key={`${numbers.length}-${font}`}
           numbers={numbers} 
           height={height} 
           width={width}

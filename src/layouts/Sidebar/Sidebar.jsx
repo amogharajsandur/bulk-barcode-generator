@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { Trash2, Ruler, DownloadCloud, Loader, MoveHorizontal, Type, Image as ImageIcon } from 'lucide-react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -7,7 +7,7 @@ import styles from './Sidebar.module.scss';
 import { fontOptions } from '../../data/fontOptions';
 import { getWatermarkedCanvas } from '../../utils/barcodeUtils';
 
-const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor, font, prefix, suffix, startSeparator, endSeparator, exportFormat }) => {
+const SamplePreview = memo(({ height, width, textPosition, theme, barColor, bgColor, font, prefix, suffix, startSeparator, endSeparator, exportFormat }) => {
   const imgRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +38,9 @@ const SamplePreview = ({ height, width, textPosition, theme, barColor, bgColor, 
       </div>
     </div>
   );
-};
+});
+
+SamplePreview.displayName = 'SamplePreview';
 
 export default function Sidebar({ 
   numbers, setNumbers, 

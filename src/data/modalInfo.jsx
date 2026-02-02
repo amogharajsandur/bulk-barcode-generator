@@ -9,9 +9,10 @@ export const modalInfoData = {
         What's New <span className="versionTag" style={{ margin: 0, fontSize: '0.65rem' }}>v{APP_CONFIG.VERSION}</span>
       </h3>
       <ul>
-        <li><strong>Advanced File Naming</strong>: Custom naming engine with support for prefixes, suffixes, and separators for easier file organization.</li>
-        <li><strong>Real-time Preview</strong>: See exactly how your barcodes and filenames will look before you download.</li>
-        <li><strong>Enhanced UI</strong>: A more intuitive and accessible sidebar layout for faster configuration.</li>
+        <li><strong>SEO & AI Ready</strong>: Added sitemap, structured data (JSON-LD), and AI crawler support for better search visibility.</li>
+        <li><strong>Performance Boost</strong>: Leveraged React memoization and optimized reconciliation for smoother bulk processing.</li>
+        <li><strong>Enhanced A11y</strong>: Upgraded modals with ARIA roles, keyboard support (Escape key), and better focus management.</li>
+        <li><strong>Technical Refactoring</strong>: Improved separation of concerns and ad-blocker resilience for a more robust application.</li>
       </ul>
       
       <hr className="modal-divider" />

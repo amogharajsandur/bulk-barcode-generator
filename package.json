@@ -1,7 +1,9 @@
 {
-  "name": "vite-react",
+  "name": "bulk-barcode-generator",
+  "description": "Bulk Barcode Generator | Free Online Bulk Tool by Amogha Raj Sandur",
+  "author": "amogharajsandur",
   "private": true,
-  "version": "1.5.0",
+  "version": "1.5.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -93,7 +93,9 @@ export default function Sidebar({
       const credits = `Generated using Bulk Barcode Generator\n--------------------------------------\nURL: https://bulk-barcode-generator.vercel.app/\nDeveloper: Amogha Raj Sandur\n--------------------------------------\nThank you for using our local-first, privacy-focused barcode tool!`;
       zip.file("READ_ME_CREDITS.txt", credits);
 
-      for (let num of numbers) {
+      const nameCount = new Map();
+
+      numbers.forEach((num) => {
         const canvas = getWatermarkedCanvas({
           value: num,
           height,
@@ -108,9 +110,23 @@ export default function Sidebar({
         const dataUrl = canvas.toDataURL(`image/${format}`, 1.0);
         const base64Data = dataUrl.split(',')[1];
         
-        const fileName = `${prefix}${startSeparator}${num}${endSeparator}${suffix}.${exportFormat}`;
+        let baseFileName = `${prefix}${startSeparator}${num}${endSeparator}${suffix}`;
+        // Remove characters that might be invalid in some filesystems or cause issues
+        baseFileName = baseFileName.replace(/[<>:"/\\|?*]/g, '_');
+        
+        let fileName = `${baseFileName}.${exportFormat}`;
+        
+        // Handle duplicate filenames by appending a counter
+        if (nameCount.has(fileName)) {
+          const count = nameCount.get(fileName) + 1;
+          nameCount.set(fileName, count);
+          fileName = `${baseFileName}-${count}.${exportFormat}`;
+        } else {
+          nameCount.set(fileName, 0);
+        }
+
         folder.file(fileName, base64Data, { base64: true });
-      }
+      });
 
       const content = await zip.generateAsync({ type: "blob" });
       saveAs(content, `downloaded_from_bulk_barcode_generator.zip`);

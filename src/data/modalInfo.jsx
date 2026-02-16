@@ -9,10 +9,9 @@ export const modalInfoData = {
         What's New <span className="versionTag" style={{ margin: 0, fontSize: '0.65rem' }}>v{APP_CONFIG.VERSION}</span>
       </h3>
       <ul>
-        <li><strong>SEO & AI Ready</strong>: Added sitemap, structured data (JSON-LD), and AI crawler support for better search visibility.</li>
-        <li><strong>Performance Boost</strong>: Leveraged React memoization and optimized reconciliation for smoother bulk processing.</li>
-        <li><strong>Enhanced A11y</strong>: Upgraded modals with ARIA roles, keyboard support (Escape key), and better focus management.</li>
-        <li><strong>Technical Refactoring</strong>: Improved separation of concerns and ad-blocker resilience for a more robust application.</li>
+        <li><strong>Fixed ZIP Overwriting</strong>: Resolved a bug where duplicate values were overwriting each other in the bulk export. All items are now correctly preserved.</li>
+        <li><strong>Smart Filenames</strong>: Implemented filename collision handling that appends counters to duplicates and sanitizes illegal characters.</li>
+        <li><strong>Improved Batch Stability</strong>: Enhanced the bulk processing logic to ensure a 1:1 match between input data and exported files.</li>
       </ul>
       
       <hr className="modal-divider" />
